@@ -14,13 +14,74 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      group_members: {
+        Row: {
+          created_at: string
+          group_id: string
+          id: string
+          member_name: string
+        }
+        Insert: {
+          created_at?: string
+          group_id: string
+          id?: string
+          member_name: string
+        }
+        Update: {
+          created_at?: string
+          group_id?: string
+          id?: string
+          member_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "study_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_groups: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          max_members: number
+          name: string
+          preferred_time: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          max_members: number
+          name: string
+          preferred_time: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          max_members?: number
+          name?: string
+          preferred_time?: string
+          subject?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      join_study_group: {
+        Args: { p_group_id: string; p_member_name: string }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never
