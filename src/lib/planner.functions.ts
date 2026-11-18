@@ -49,7 +49,7 @@ export const generateStudyPlan = createServerFn({ method: "POST" })
         return { error: "The AI planner is not configured yet. Please try again later." };
       }
 
-      const [{ createLovableAiGatewayProvider }, { streamObject }] = await Promise.all([
+      const [{ createLovableAiGatewayProvider }, { streamText, Output }] = await Promise.all([
         import("./ai/gateway.server"),
         import("ai"),
       ]);
@@ -59,9 +59,9 @@ export const generateStudyPlan = createServerFn({ method: "POST" })
         structuredOutputs: true,
       });
 
-      const result = streamObject({
+      const result = streamText({
         model: provider("google/gemini-3.8-flash"),
-        schema: planSchema,
+        output: Output.object({ schema: planSchema }),
         system:
           "You are a friendly study coach for college students. Create realistic, focused study plans. " +
           "Spread the available minutes across the requested topics: give more time to harder or exam-critical material " +
@@ -75,7 +75,7 @@ export const generateStudyPlan = createServerFn({ method: "POST" })
           "Create a structured study plan for this session.",
       });
 
-      const plan = await result.object;
+      const plan = (await result.output) as StudyPlan;
       return { plan, error: null as string | null };
     } catch (error) {
       console.error("generateStudyPlan failed:", error);

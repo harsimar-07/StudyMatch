@@ -11,7 +11,7 @@ import { groupQueryOptions, type StudyGroup } from "@/lib/study-groups.functions
 
 export const Route = createFileRoute("/groups/$id")({
   head: ({ loaderData }) => {
-    const group = loaderData?.group;
+    const group = (loaderData as { group?: StudyGroup | null } | undefined)?.group;
     return {
       meta: [
         { title: group ? `${group.name} — StudyMatch` : "Study group — StudyMatch" },
@@ -95,7 +95,7 @@ function JoinForm({ group }: { group: StudyGroup }) {
 }
 
 function GroupDetailPage() {
-  const { params } = Route.useParams();
+  const params = Route.useParams();
   const { data } = useSuspenseQuery(groupQueryOptions(params.id));
 
   if (!data.group) throw notFound();
